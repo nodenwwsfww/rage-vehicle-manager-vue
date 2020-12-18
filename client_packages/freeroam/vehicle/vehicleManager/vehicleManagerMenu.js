@@ -2,14 +2,9 @@ const vehicleFunctions = require('freeroam/vehicle/vehicleFunctions');
 
 class vehicleManager {
 
-    constructor(mainBrowser) {
-        this.mainBrowser = mainBrowser;
+    constructor() {
         this.status = false;
-
-        this.audioLinkInputBrowser = null;
         this.audioStreamBrowser = null;
-
-
         // Config
         this.key = 0x4B;
         this.bindLaunchKey();
@@ -19,22 +14,25 @@ class vehicleManager {
 
     destroy() {
         this.unBindLaunchKey();
-        vueCommit(this.mainBrowser, 'setModalActive', null);
-        vueCommit(this.mainBrowser, 'setModalActive', null);
-        this.mainBrowser = null;
+        vueCommit(hud, 'setModalActive', null);
+        vueCommit(hud, 'setModalActive', null);
+        hud = null;
     }
 
     getDataForModal() {
         const vehicle = player.vehicle;
         if (!vehicle) return;
-        
+
+        const {audio, electricalTruck, lightsInCar, hood, trunk, speedLimit} = vehicle;
+
         return [
-            {id: 1, htmlID: 'audio', name: 'АУДИО', status: false},
-            {id: 2, htmlID: 'electrical-truck', name: 'АВАРИЙКА', status: false},
-            {id: 3, htmlID: 'lights', name: 'СВЕТ В САЛОНЕ', status: false},
-            {id: 4, htmlID: 'hood', name: 'КАПОТ', status: false},
-            {id: 5, htmlID: 'trunk', name: 'БАГАЖНИК', status: false},
-            {id: 6, htmlID: 'speed-limit-control', name: 'ЛИМИТ КОНТРОЛЬ', status: false},
+            {id: 1, htmlID: 'audio', name: 'АУДИО', status: audio},
+            {id: 2, htmlID: 'electrical-truck', name: 'АВАРИЙКА', status: electricalTruck},
+            {id: 3, htmlID: 'lights', name: 'СВЕТ В САЛОНЕ', status: lightsInCar},
+            {id: 4, htmlID: 'hood', name: 'КАПОТ', status: hood},
+            {id: 5, htmlID: 'trunk', name: 'БАГАЖНИК', status: trunk},
+            {id: 6, htmlID: 'speed-limit-control', name: 'ЛИМИТ КОНТРОЛЬ', status: speedLimit},
+
         ];
     }
 
@@ -46,11 +44,11 @@ class vehicleManager {
         mp.gui.chat.activate(!this.status);
 
         if (status) {
-            vueCommit(this.mainBrowser, 'setModalActive', 'vehicle-manager');
-            vueCommit(this.mainBrowser, 'setModalActiveData', this.getDataForModal());
+            vueCommit(hud, 'setModalActive', 'vehicle-manager');
+            vueCommit(hud, 'setModalActiveData', this.getDataForModal());
         } else {
-            vueCommit(this.mainBrowser, 'setModalActive', null);
-            vueCommit(this.mainBrowser, 'setModalActive', null);
+            vueCommit(hud, 'setModalActive', null);
+            vueCommit(hud, 'setModalActive', null);
         }
 
     }
@@ -89,10 +87,10 @@ class vehicleManager {
         mp.gui.chat.show(false);
         mp.gui.chat.activate(false);
 
-        this.audioLinkInputBrowser = mp.browsers.new('package://freeroam/browser/vehicle/vehicleManagerMenu/vehicleManagerAudio.html');
+        hud = mp.browsers.new('package://freeroam/browser/vehicle/vehicleManagerMenu/vehicleManagerAudio.html');
 
         mp.events.add('browserDomReady', browser => {
-            if (browser === this.audioLinkInputBrowser) {
+            if (browser === hud) {
                 mp.gui.cursor.show(true, true);
             }
         });
@@ -100,7 +98,7 @@ class vehicleManager {
     }
 
     audioLinkInputHandler(audioLink) {
-        this.audioLinkInputBrowser.destroy();
+        hud.destroy();
         this.audioLink = audioLink;
         mp.gui.cursor.show(false, false);
         this.setActiveStatus(false);
@@ -115,6 +113,7 @@ class vehicleManager {
         player.vehicle.audio = true;
 
         this.audioStreamBrowser = mp.browsers.new('package://freeroam/browser/vehicle/vehicleManagerMenu/audioMusic.html');
+
 
         mp.events.add('browserDomReady', browser => {
             if (browser === this.audioStreamBrowser) {

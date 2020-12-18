@@ -1,6 +1,5 @@
 global.player = mp.players.local;
-global.vueCommit = function(browser, method, value) {
-    browser.execute(`appData.commit('${method}', ${value})`);
-}
 
+// Browser
+require('freeroam/browserAPI');
 require('freeroam/index.js');

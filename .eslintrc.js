@@ -24,5 +24,6 @@ module.exports = {
         "player": true,
         "console": true,
         "vueCommit": true,
+        "hud": true,
     }
 };
