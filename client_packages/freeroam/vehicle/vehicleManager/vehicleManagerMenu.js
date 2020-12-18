@@ -2,8 +2,8 @@ const vehicleFunctions = require('freeroam/vehicle/vehicleFunctions');
 
 class vehicleManager {
 
-    constructor(ui) {
-        this.ui = ui;
+    constructor(mainBrowser) {
+        this.mainBrowser = mainBrowser;
         this.status = false;
 
         this.audioLinkInputBrowser = null;
@@ -19,8 +19,23 @@ class vehicleManager {
 
     destroy() {
         this.unBindLaunchKey();
-        this.ui.Close();
-        this.ui = null;
+        vueCommit(this.mainBrowser, 'setModalActive', null);
+        vueCommit(this.mainBrowser, 'setModalActive', null);
+        this.mainBrowser = null;
+    }
+
+    getDataForModal() {
+        const vehicle = player.vehicle;
+        if (!vehicle) return;
+        
+        return [
+            {id: 1, htmlID: 'audio', name: 'АУДИО', status: false},
+            {id: 2, htmlID: 'electrical-truck', name: 'АВАРИЙКА', status: false},
+            {id: 3, htmlID: 'lights', name: 'СВЕТ В САЛОНЕ', status: false},
+            {id: 4, htmlID: 'hood', name: 'КАПОТ', status: false},
+            {id: 5, htmlID: 'trunk', name: 'БАГАЖНИК', status: false},
+            {id: 6, htmlID: 'speed-limit-control', name: 'ЛИМИТ КОНТРОЛЬ', status: false},
+        ];
     }
 
     setActiveStatus(status) {
@@ -30,8 +45,13 @@ class vehicleManager {
         mp.gui.chat.show(!this.status);
         mp.gui.chat.activate(!this.status);
 
-        if (status) this.ui.Open();
-        else this.ui.Close();
+        if (status) {
+            vueCommit(this.mainBrowser, 'setModalActive', 'vehicle-manager');
+            vueCommit(this.mainBrowser, 'setModalActiveData', this.getDataForModal());
+        } else {
+            vueCommit(this.mainBrowser, 'setModalActive', null);
+            vueCommit(this.mainBrowser, 'setModalActive', null);
+        }
 
     }
 

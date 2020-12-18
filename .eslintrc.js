@@ -23,5 +23,6 @@ module.exports = {
         'window': true,
         "player": true,
         "console": true,
+        "vueCommit": true,
     }
 };
