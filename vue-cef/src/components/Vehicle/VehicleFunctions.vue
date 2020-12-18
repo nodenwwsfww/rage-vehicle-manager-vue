@@ -1,9 +1,9 @@
 <template>
     <div>
         <div id="vehicle-functions-list" v-for="f of vehicleFunctionsData" :key="f.id">
-            <p v-if="f.status" :id="f.htmlID" class="function">{{f.name}}<span class="turn-status .turned-on">ВКЛ</span>
+            <p v-if="f.status" :id="f.htmlID" class="function">{{f.name}}<span class="turn-status turned-on">ВКЛ</span>
             </p>
-            <p v-else :id="f.htmlID" class="function">{{f.name}}<span class="turn-status .turned-off">ВЫКЛ</span></p>
+            <p v-else :id="f.htmlID" class="function">{{f.name}}<span class="turn-status turned-off">ВЫКЛ</span></p>
         </div>
     </div>
 </template>
@@ -15,7 +15,7 @@ export default {
             type: Array,
             required: true,
         }
-    }
+    },
 }
 </script>
 
