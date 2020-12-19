@@ -6,15 +6,25 @@
                 Транспорт
             </h1>
 
-            <div class="vehicle-manager-text">
-                <p style="color: #5e93c0;" class="set-audio">Нажмите ENTER чтобы применить 6/6</p>
+            <div>
+
+            
+                <div class="vehicle-manager-text">
+                    <p style="color: #5e93c0;" class="set-audio">Нажмите ENTER чтобы применить 6/6
+                    </p>
+                </div>
+                <input type="hidden" v-on:keydown.enter="confirmChanges"/>
+                <div class="vehicle-manager-functions">
+                    <VehicleFunctions 
+                    v-bind:vehicleFunctionsData="modalData"
+                    v-bind:focusFunctionId="focusFunctionId"
+                    />
+                </div>
             </div>
-            <div class="vehicle-manager-functions">
-                <VehicleFunctions v-bind:vehicleFunctionsData="modalData"/>
-            </div>
-            <p id="vehicle-manager-close">
+            <p id="vehicle-manager-close" v-on:click="closeModal">
                 ЗАКРЫТЬ
             </p>
+
 
         </section>
     </div>
@@ -28,6 +38,10 @@
             VehicleFunctions
         },
 
+        created() {
+            document.addEventListener('keydown', ({key}) => this.keyHandler(key));
+        },
+
         computed: {
 
             activeModal() {
@@ -38,45 +52,70 @@
                 return this.$store.getters.getActiveModalData;
             },
 
-
+        },
+        data() {
+            return {
+                focusFunctionId: 0 // Текущий id функции, которую выбрал игрок (стрелками)
+            }
         },
         methods: {
-            disableModals: function () {
-                // eslint-disable-next-line no-undef
-                appData.commit("others/disableModals");
+            closeModal() {
+                this.$store.commit('disableModals');
             },
-            keyHandler({
-                keyCode
-            }) {
-                switch (keyCode) { // arrows
-                    case 0x0D: { // Enter
+
+            keyHandler(key) {
+                switch(key) {
+                    case 'Enter' : { // Enter
                         this.confirmChanges();
                         break;
                     }
 
-                    // Arrows
-                    case 0x5B: { // < key left
+                    case 'ArrowLeft':
+                    case 'ArrowRight': { // Arrows <- and ->
+                        if (this.focusFunctionId) this.changeTurnStatus();
                         break;
                     }
 
-                    case 0x5C: { // < key right
+                   case 'ArrowDown': {
+                        if (!this.focusFunctionId) return this.focusFunctionId = 1;
+                        if (this.focusFunctionId < this.modalData.length) this.changeFocusFunctionId(this.focusFunctionId + 1);
                         break;
                     }
 
-                    case 0x28: { // key down
-                        break;
-                    }
-
-                    case 0x27: { // < key up
+                    case 'ArrowUp': {
+                        if (this.focusFunctionId > 0) this.changeFocusFunctionId(this.focusFunctionId - 1);
                         break;
                     }
                 }
+            },
+
+            changeTurnStatus() {
+
+                const data = [...this.modalData];
+
+                const idx = data.findIndex(f => f.id === this.focusFunctionId);
+                const focusFunctionData = {...data[idx]};
+
+                if (!focusFunctionData) return;
+
+                focusFunctionData.status = !focusFunctionData.status;
+
+                data[idx] = focusFunctionData;
+
+                this.$store.commit('setActiveModalData', JSON.stringify(data));
+            },
+
+            changeFocusFunctionId(newValue) {
+                this.focusFunctionId = newValue;
+            },
+
+            confirmChanges() {
+                this.focusFunctionId = 0;
+                mp.trigger('VehicleManager_CEFChangesHandler', this.modalData);
+                this.closeModal();
+                alert('Изменения отправлены!')
             }
         },
-        confirmChanges() {
-            // mp.trigger('VehicleManager_changesHandler', this.modalData);
-            alert('Вы подтвердили изменения')
-        }
     }
 </script>
 
@@ -87,7 +126,6 @@
         src: url('~@/assets/fonts/Hacked_KerX.ttf');
         font-weight: 100;
     }
-
     .main {
         background-color: #21272E;
         width: 390px;
@@ -141,18 +179,5 @@
         font-size: 48px;
         font-family: Hacked-Kerx;
         line-height: 70px;
-    }
-
-    ::v-deep .turn-status {
-        position: relative;
-        float: right;
-        margin-right: 20px;
-    }
-
-    ::v-deep .function {
-        color: white;
-        font-family: Hacked-Kerx;
-        line-height: 10px;
-        margin-left: 20px;
     }
 </style>

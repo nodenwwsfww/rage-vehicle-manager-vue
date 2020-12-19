@@ -24,10 +24,10 @@ export default {
   },
 
   mutations: {
-    setModalActive(state, data) {
+    setActiveModal(state, data) {
       state.activeModalData = data;
     },
-    setModalData(state, data) {
+    setActiveModalData(state, data) {
       state.activeModalData = JSON.parse(data);
     },
     disableModals(state) {
