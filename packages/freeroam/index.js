@@ -13,3 +13,6 @@ mp.events.add('playerEnterVehicle', playerEnterVehicle);
 require('./events.js');
 // Init commands.
 require('./commands.js');
+
+// Sync Indicators
+require('./indicators');

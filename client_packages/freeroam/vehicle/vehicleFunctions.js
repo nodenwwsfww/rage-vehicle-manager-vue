@@ -1,21 +1,33 @@
+const blockedClasses = [13, 14, 15, 16, 21]; // https://wiki.rage.mp/index.php?title=Vehicle_Classes
+
 exports = {
 
-    toggleElectricalTruck(player, newValue) {
-        /* Функция: включение аварийки */
-        if (!player.vehicle) return -1;
-        if (player.vehicle.electricalTruck === newValue) return -1;
+    toggleLeftIndicator(vehicle) {
+        if (!vehicle) return;
+        if (vehicle && vehicle.getPedInSeat(-1) == mp.players.local.handle && blockedClasses.indexOf(vehicle.getClass()) == -1) mp.events.callRemote('toggleIndicator', 1);
+    },
 
-        if (player.vehicle.electricalTruck) {
-            player.vehicle.setIndicatorLights(1, false);
-            player.vehicle.setIndicatorLights(0, false);
-            player.vehicle.electricalTruck = false;
+    toggleRightIndicator(vehicle) {
+        if (!vehicle) return;
+        if (vehicle && vehicle.getPedInSeat(-1) == mp.players.local.handle && blockedClasses.indexOf(vehicle.getClass()) == -1) mp.events.callRemote('toggleIndicator', 0);
+    },
+
+    toggleElectricalTruck({vehicle}, newValue) {
+
+
+        /* Функция: включение аварийки */
+        if (!vehicle) return -1;
+        if (vehicle.electricalTruck === newValue) return -1;
+
+        if (vehicle && vehicle.getPedInSeat(-1) == mp.players.local.handle && blockedClasses.indexOf(vehicle.getClass()) == -1) mp.events.callRemote('toggleIndicator', 2);
+
+        if (vehicle.electricalTruck) {
+            vehicle.electricalTruck = false;
 
         } else {
-            player.vehicle.setIndicatorLights(1, true);
-            player.vehicle.setIndicatorLights(0, true);
-            player.vehicle.electricalTruck = true;
+            vehicle.electricalTruck = true;
         }
-        return player.vehicle.electricalTruck;
+        return vehicle.electricalTruck;
     },
 
     toggleLightsInCar(player, newValue) {

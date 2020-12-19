@@ -52,10 +52,20 @@
                 return this.$store.getters.getActiveModalData;
             },
 
+            checkForAChanges() {
+                // Проверяет, есть ли изменения относительно тех данных, которые давались сервером изначально, тоесть чтобы не было пустых запросов на сервер (запросов без изменений)
+                return this.sourceModalData.some((f, i) => this.modalData[i].status !== f.status);
+            },
+
+
         },
+
         data() {
             return {
-                focusFunctionId: 0 // Текущий id функции, которую выбрал игрок (стрелками)
+                focusFunctionId: 0, // Текущий id функции, которую выбрал игрок (стрелками)
+                sourceModalData: [
+                    ...this.$store.getters.getActiveModalData
+                ]
             }
         },
         methods: {
@@ -110,12 +120,14 @@
             },
 
             confirmChanges() {
-                this.focusFunctionId = 0;
-                mp.trigger('VehicleManager_CEFChangesHandler', this.modalData);
-                this.closeModal();
-                alert('Изменения отправлены!')
+                if (this.checkForAChanges) { // Если есть изменения, то мы выполняем отправку данных, иначе ничего
+                    this.focusFunctionId = 0;
+                    mp.trigger('vehicleManager_CEFChangesHandler', JSON.stringify(this.modalData));
+                    this.closeModal();
+                    alert('Изменения отправлены!')
+                }
             }
-        },
+        }
     }
 </script>
 
