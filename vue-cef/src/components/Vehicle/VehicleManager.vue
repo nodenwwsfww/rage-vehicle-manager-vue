@@ -124,7 +124,6 @@
                     this.focusFunctionId = 0;
                     mp.trigger('vehicleManager_CEFChangesHandler', JSON.stringify(this.modalData));
                     this.closeModal();
-                    alert('Изменения отправлены!')
                 }
             }
         }

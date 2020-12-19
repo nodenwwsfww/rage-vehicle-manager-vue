@@ -16,7 +16,7 @@ class vehicleManager {
         ];
 
         // Config
-        this.key = 0x4B;
+        this.launchKey = 0x4B;
         this.bindLaunchKey();
         this.events();
     }
@@ -24,9 +24,7 @@ class vehicleManager {
 
     destroy() {
         this.unBindLaunchKey();
-        vueCommit(hud, 'setModalActive', null);
-        vueCommit(hud, 'setModalActive', null);
-        hud = null;
+        mp.events.call('comeBackFromBrowser');
     }
 
     getDataForModal() {
@@ -87,16 +85,12 @@ class vehicleManager {
 
         this.status = status;
 
-        mp.gui.chat.show(!this.status);
-        mp.gui.chat.activate(!this.status);
-
         if (status) {
-            vueCommit(hud, 'setModalActive', 'vehicle-manager');
-            vueCommit(hud, 'setModalActiveData', this.getDataForModal());
+            mp.events.call('toggleModal', 'vehicle-manager', 'chat', this.getDataForModal());
         } else {
-            vueCommit(hud, 'setModalActive', null);
-            vueCommit(hud, 'setModalActive', null);
+            mp.events.call('comeBackFromBrowser');
         }
+
 
     }
 
@@ -114,27 +108,25 @@ class vehicleManager {
     }
 
     bindLaunchKey() {
-        mp.keys.bind(this.key, false, () => {
+        mp.keys.bind(this.launchKey, false, () => {
             if (player.vehicle) {
-                this.toggleMenu();
+                this.showMenu();
             }
         });
 
     }
 
     unBindLaunchKey() {
-        mp.keys.unbind(this.key, true);
+        mp.keys.unbind(this.launchKey, true);
     }
 
     // Manager Functions
 
     createAudioLinkInput() {
 
-        this.setActiveStatus(false);
-        mp.gui.chat.show(false);
-        mp.gui.chat.activate(false);
+        mp.events.call('comeBackFromBrowser');
 
-        hud = mp.browsers.new('package://freeroam/browser/vehicle/vehicleManagerMenu/vehicleManagerAudio.html');
+        // hud = mp.browsers.new('package://freeroam/browsers/hud/vehicle/vehicleManagerMenu/vehicleManagerAudio.html');
 
         mp.events.add('browserDomReady', browser => {
             if (browser === hud) {
@@ -145,7 +137,6 @@ class vehicleManager {
     }
 
     audioLinkInputHandler(audioLink) {
-        hud.destroy();
         this.audioLink = audioLink;
         mp.gui.cursor.show(false, false);
         this.setActiveStatus(false);
@@ -159,7 +150,7 @@ class vehicleManager {
     startAudioStreamInBrowser() {
         player.vehicle.audio = true;
 
-        this.audioStreamBrowser = mp.browsers.new('package://freeroam/browser/vehicle/vehicleManagerMenu/audioMusic.html');
+        this.audioStreamBrowser = mp.browsers.new('package://freeroam/browsers/hud/vehicle/vehicleManagerMenu/audioMusic.html');
 
 
         mp.events.add('browserDomReady', browser => {

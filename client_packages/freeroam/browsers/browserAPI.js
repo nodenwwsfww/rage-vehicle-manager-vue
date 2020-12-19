@@ -1,4 +1,4 @@
-global.hud = null; // Modal data
+global.hud = mp.browsers.new('package://freeroam/browsers/hud/index.html'); // Modal data
 global.vueCommit = (browser, method, value) => browser.execute(`appData.commit('${method}', ${value})`);
 
 mp.events.add('prepareForBrowser', visible => {
@@ -20,3 +20,13 @@ mp.events.add('comeBackFromBrowser', () => {
     mp.game.ui.displayHud(true);
     mp.gui.cursor.show(false, false);
 });
+
+// Modal API (Hud)
+
+mp.events.add('toggleModal', (toggleModalName, partsToHide, data) => {
+    vueCommit(hud, 'setModalData', data || null);
+    vueCommit(hud, 'setModalActive', toggleModalName);
+    mp.events.call('prepareForBrowser', partsToHide);
+});
+
+mp.events.add('disableModals', () => mp.events.call('comeBackFromBrowser'));

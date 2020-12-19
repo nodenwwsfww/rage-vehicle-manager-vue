@@ -1,13 +1,11 @@
 // Vehicle Manager
 const VehicleManager = require('freeroam/vehicle/vehicleManager/vehicleManagerMenu');
-const createVehicleManagerUI = require('freeroam/vehicle/vehicleManager/vehicleManagerUI');
-
 let vehicleManager = null;
 
 
 mp.events.add('playerEnteredVehicle', () => {
     if (!vehicleManager) {
-        vehicleManager = new VehicleManager(createVehicleManagerUI(player.vehicle));
+        vehicleManager = new VehicleManager();
     }
 
 });
