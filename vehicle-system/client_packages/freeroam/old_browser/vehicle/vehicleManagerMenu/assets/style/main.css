@@ -1,0 +1,46 @@
+@font-face {
+    font-family: Hacked-KerX;
+    src: url(../../fonts/Hacked_KerX.ttf);
+    font-weight: 100;
+}
+
+.main {
+    background-color:#21272E;
+    width: 390px;
+    height: 300px;
+    border-radius: 10px;
+
+}
+
+.vehicle-manager-text {
+    margin-top: auto;
+    margin-left: 20px;
+    font-family: Hacked-Kerx;
+    font-size: 16px;
+}
+
+#vehicle-manager-close {
+    color: #21272E;
+    background-color: #fff;
+    padding-left: 20px;
+    font-family: Hacked-Kerx;
+}
+.header {
+    color: white;
+    text-align: center;
+    font-size: 48px;
+    font-family: Hacked-Kerx;
+    line-height: 70px;
+}
+
+.turn-status {
+    position: relative;
+    float: right;
+    margin-right: 20px;
+}
+
+.function {
+    color: white;
+    font-family: Hacked-Kerx;
+    line-height: 10px;
+}
