@@ -1,36 +1,33 @@
 <template>
-    <div v-if="activeModal === 'vehicle-manager' && modalData">
-        <section class="main">
-            <h1 class="header">
-                Транспорт
-            </h1>
+    <div class="popup">
+        <h1 class="header">
+            Транспорт
+        </h1>
 
-            <div>
+        <div>
 
-                <div class="vehicle-manager-text">
-                    <p style="color: #5e93c0;" class="set-audio">Нажмите ENTER чтобы применить 6/6
-                    </p>
-                </div>
-                <div class="vehicle-manager-functions">
-                    <VehicleFunctions v-bind:vehicleFunctionsData="modalData"
-                        v-bind:focusFunctionId="focusFunctionId" />
-                </div>
+            <div class="vehicle-manager-text">
+                <p style="color: #5e93c0;">Нажмите ENTER чтобы применить
+                </p>
             </div>
-            <p id="vehicle-manager-close" v-on:click="closeModal">
-                ЗАКРЫТЬ
-            </p>
-
-
-        </section>
+            <div class="vehicle-manager-functions">
+                <VehicleFunctions v-bind:vehicleFunctionsData="modalData" v-bind:focusFunctionId="focusFunctionId" />
+            </div>
+        </div>
+        <p id="vehicle-manager-close" v-on:click="closeModal">
+            ЗАКРЫТЬ
+        </p>
     </div>
+
 
 </template>
 
 <script>
-    import VehicleFunctions from '@/components/Vehicle/VehicleFunctions'
+    import VehicleFunctions from '@/components/Modals/Vehicle/VehicleFunctions';
+
     export default {
         components: {
-            VehicleFunctions
+            VehicleFunctions,
         },
 
         created() {
@@ -63,7 +60,7 @@
             return {
                 focusFunctionId: 0, // Текущий id функции, которую выбрал игрок (стрелками)
                 sourceModalData: [],
-                getSourceDataStatus: false
+                getSourceDataStatus: false,
             }
         },
 
@@ -81,7 +78,10 @@
 
                     case 'ArrowLeft':
                     case 'ArrowRight': { // Arrows <- and ->
-                        if (this.focusFunctionId) this.changeTurnStatus();
+                        if (this.focusFunctionId) {
+                            if (this.focusFunctionId === 1) this.audioLinkSwitchHandler();
+                            else this.changeTurnStatus();
+                        }
                         break;
                     }
 
@@ -99,11 +99,36 @@
                 }
             },
 
-            changeTurnStatus() {
+            audioLinkSwitchHandler() {
+                const {audioStreamStatus=status} = this.modalData.filter(f => f.id === this.focusFunctionId);
+
+                if (audioStreamStatus) {
+                    this.stopAudioStream();
+                } else {
+                    this.showAudioLinkInputMenu();
+                }
+            },
+
+            showAudioLinkInputMenu() {
+                this.$store.commit('setActiveModal', this.activeModal + '-audio');
+                this.$store.commit('setActiveModalData', JSON.stringify({action: 'input', data: this.modalData}));
+            },
+
+
+            stopAudioStream() {
+                this.$store.commit('setActiveModal', this.activeModal + '-audio');
+                this.$store.commit('setActiveModalData', JSON.stringify({action: 'stop', data: this.modalData}));
+            },
+
+            initChangesHandlerIfItNot() {
                 if (!this.getSourceDataStatus) {
                     this.sourceModalData = [...this.$store.getters.getActiveModalData];
                     this.getSourceDataStatus = true;
                 }
+            },
+
+            changeTurnStatus() {
+                this.initChangesHandlerIfItNot();
 
                 const data = [...this.modalData];
 
@@ -126,14 +151,10 @@
             },
 
             confirmChanges() {
-                if (!this.getSourceDataStatus) {
-                    // Получаем исходные данные, для дальнейшего сравнения с изменениями
-                    this.sourceModalData = [...this.$store.getters.getActiveModalData];
-                    this.getSourceDataStatus = true;
-                }
+                this.initChangesHandlerIfItNot();
 
                 if (this.checkForAChanges) { // Если есть изменения, то мы выполняем отправку данных, иначе ничего
-                    
+
                     const serverData = [...this.modalData];
 
                     mp.trigger('vehicleManager_CEFChangesHandler', JSON.stringify(serverData));
@@ -150,63 +171,64 @@
 
 <style scoped>
     @font-face {
-        font-family: Hacked-KerX;
-        src: url('~@/assets/fonts/Hacked_KerX.ttf');
+        font-family: Roboto;
+        src: url('~@/assets/fonts/Roboto-Regular.ttf');
         font-weight: 100;
     }
 
-    .main {
-        background-color: #21272E;
-        width: 390px;
-        height: 300px;
+    .popup-overlay {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+
+    .popup {
+        display: inline-block;
+        top: 50%;
+        width: 450px;
+        height: 370px;
+        vertical-align: middle;
         border-radius: 10px;
-        margin-left: auto;
-        margin-right: auto
+        background-color: #21272E;
     }
 
-    ::v-deep body {
-        margin: 0;
-        padding: 0;
-        font-family: Hacked-KerX;
+    body {
+        font-family: Roboto;
         text-transform: uppercase;
-        font-size: 21px;
-    }
-
-    .text {
-        text-align: center;
-    }
-
-    #youtube-audio {
-        margin-top: 5px;
+        font-size: 24px;
     }
 
     .header {
         color: white;
         text-align: center;
+        font-family: Roboto;
         font-size: 48px;
-        font-family: Hacked-Kerx;
         line-height: 70px;
     }
 
     ::v-deep .vehicle-manager-text {
         margin-top: auto;
         margin-left: 20px;
-        font-family: Hacked-Kerx;
-        font-size: 16px;
+        font-family: Roboto;
+        font-size: 18px;
     }
 
     #vehicle-manager-close {
         color: #21272E;
         background-color: #fff;
         padding-left: 20px;
-        font-family: Hacked-Kerx;
+        position: static;
+        margin-top: 31px;
+        font-family: Roboto;
     }
 
     .header {
         color: white;
         text-align: center;
         font-size: 48px;
-        font-family: Hacked-Kerx;
+        font-family: Roboto;
         line-height: 70px;
     }
 </style>

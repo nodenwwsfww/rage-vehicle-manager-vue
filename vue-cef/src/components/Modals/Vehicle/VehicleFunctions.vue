@@ -1,10 +1,16 @@
 <template>
     <div>
         <div id="vehicle-function" v-for="f of vehicleFunctionsData" :key="f.id">
-            <p v-if="f.status" :id="f.htmlID" class="func" :class="focusFunctionId === f.id ? 'focus-function' : ''">
+            <p v-if="f.status === true" :id="f.htmlID" class="func"
+                :class="focusFunctionId === f.id ? 'focus-function' : ''">
                 {{f.name}}<span class="turn-status turned-on">ВКЛ</span>
             </p>
-            <p v-else :id="f.htmlID" class="func" :class="focusFunctionId === f.id ? 'focus-function' : ''">{{f.name}}<span
+
+            <p v-else-if="f.htmlID === 'audio'" :id="f.htmlID" class="func" :class="focusFunctionId === f.id ? 'focus-function' : ''">{{f.name}}<span
+                    class="turn-status">>>></span></p>
+
+            <p v-else :id="f.htmlID" class="func"
+                :class="focusFunctionId === f.id ? 'focus-function' : ''">{{f.name}}<span
                     class="turn-status turned-off">ВЫКЛ</span></p>
         </div>
     </div>
@@ -35,7 +41,7 @@
     }
 
     .focus-function {
-         box-shadow: 400px 0 0 0 rgba(0,0,0,.3) inset;
+        box-shadow: 400px 0 0 0 rgba(0, 0, 0, .3) inset;
     }
 
     .turn-status {
@@ -46,7 +52,8 @@
 
     .func {
         color: white;
-        font-family: Hacked-Kerx;
+        font-family: Roboto;
+        font-size: 18px;
         line-height: 10px;
         margin-left: 20px;
     }
