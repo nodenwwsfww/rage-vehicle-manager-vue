@@ -2,13 +2,13 @@
     <div class="popup-overlay">
         <div class="popup">
             <div class="content">
-                <h1 class="header">Auto Audio</h1>
+                <h1 class="header">Youtube Audio</h1>
             
-                <p class="tip-message" style="color: #5e93c0;">Ссылка должна указывать на аудио-файл, в обычном формате: https://computerhope.com/jargon/m/example.mp3</p>
+                <p class="tip-message" style="color: #5e93c0;">Ссылка должна указывать на youtube видео, в обычном формате: https://www.youtube.com/watch?v=-Jqz3GQWhJY</p>
 
                 <div class="wrapper">
                     <div class="input-link-overlay">
-                        <input type="text" class="form-control" id="link-input" placeholder="ссылка на аудио" />
+                        <input type="text" class="form-control" id="link-input" placeholder="ссылка на видео" value="" />
                     </div>
 
                     <div class="buttons">
@@ -51,6 +51,26 @@
         },
 
         methods: {
+            parseAudioID(link) {
+                const linkFragment = link.search;
+                let newLink = '';
+
+                const regularExpressionStart = /[?v=]/;
+                const regularExpressionEnd = /[&]/; // for query params, as time, etc.
+
+                const start = linkFragment.search(regularExpressionStart) + 3;
+                const end = linkFragment.search(regularExpressionEnd);
+
+                if (end !== -1) {
+                    newLink = linkFragment.slice(start, end);
+                } else {
+                    newLink = linkFragment.slice(start);
+                }
+
+                return newLink;
+
+            },
+
             audioLinkHandler() {
                 let link = document.querySelector('#link-input')?.value;
                 link = link.trim();
@@ -59,25 +79,34 @@
                 try {
                     link = new URL(link);
                 } catch(err) {
-                    this.$store.commit('setError', 'Некорректная ссылка на аудио');
-                    console.log('error');
+                    this.$store.commit('setError', 'Некорректная ссылка на видео');
                     return;
                 }
 
                 this.audioLink = link;
-                this.startAudioStreamInBrowser();
+                this.prepareDataForAudioStream();
             },
 
-            startAudioStreamInBrowser() {
-                this.audio = new Audio(this.audioLink);
-                this.audio.addEventListener('canplaythrough', () => {
-                    this.audio.play();
-                });
+            prepareDataForAudioStream() {
+                
+                const id = this.parseAudioID(this.audioLink);
+                const link = this.audioLink;
+
+                const audio = {
+                    id,
+                    link,
+                    status: false,
+                };
+
+                this.$store.commit('setAudioStreamData', JSON.stringify(audio));
+                this.returnBack();
 
             },
 
             returnBack() {
 
+                this.$store.commit('setActiveModalData', JSON.stringify(this.modalData.data));
+                this.$store.commit('setActiveModal', this.activeModal.replace('-audio', ''));
             },
         }
     }

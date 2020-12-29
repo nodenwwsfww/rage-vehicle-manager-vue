@@ -31,9 +31,14 @@
         },
 
         created() {
-            document.addEventListener('keydown', ({
+            document.onkeydown = ({
                 key
-            }) => this.keyHandler(key));
+            }) => this.keyHandler(key);
+        },
+
+
+        beforeDestroy() {
+            document.onkeydown = null;
         },
 
 
@@ -48,10 +53,10 @@
                 return this.$store.getters.getActiveModalData;
             },
 
-            checkForAChanges() {
+/*             checkForAChanges() {
                 // Проверяет, есть ли изменения относительно тех данных, которые давались сервером изначально, тоесть чтобы не было пустых запросов на сервер (запросов без изменений)
                 return this.sourceModalData.some((f, i) => this.modalData[i].status !== f.status);
-            },
+            }, */
 
 
         },
@@ -59,8 +64,6 @@
         data() {
             return {
                 focusFunctionId: 0, // Текущий id функции, которую выбрал игрок (стрелками)
-                sourceModalData: [],
-                getSourceDataStatus: false,
             }
         },
 
@@ -120,15 +123,14 @@
                 this.$store.commit('setActiveModalData', JSON.stringify({action: 'stop', data: this.modalData}));
             },
 
-            initChangesHandlerIfItNot() {
+/*             initChangesHandlerIfItNot() {
                 if (!this.getSourceDataStatus) {
                     this.sourceModalData = [...this.$store.getters.getActiveModalData];
                     this.getSourceDataStatus = true;
                 }
-            },
+            }, */
 
             changeTurnStatus() {
-                this.initChangesHandlerIfItNot();
 
                 const data = [...this.modalData];
 
@@ -151,18 +153,13 @@
             },
 
             confirmChanges() {
-                this.initChangesHandlerIfItNot();
 
-                if (this.checkForAChanges) { // Если есть изменения, то мы выполняем отправку данных, иначе ничего
+                const serverData = [...this.modalData];
 
-                    const serverData = [...this.modalData];
+                mp.trigger('vehicleManager_CEFChangesHandler', JSON.stringify(serverData));
 
-                    mp.trigger('vehicleManager_CEFChangesHandler', JSON.stringify(serverData));
-
-                    this.getSourceDataStatus = false;
-                    this.focusFunctionId = 0;
-                    this.closeModal();
-                }
+                this.focusFunctionId = 0;
+                // this.closeModal();
             }
         }
     }

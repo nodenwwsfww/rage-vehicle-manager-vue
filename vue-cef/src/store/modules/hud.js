@@ -3,6 +3,9 @@ export default {
   state: {
     activeModal: null,
     activeModalData: null,
+
+    audioStreamData: null,
+
     hudStatus: 2,
     error: null,
   },
@@ -11,6 +14,10 @@ export default {
 
     getErrorData(state) {
       return state.error;
+    },
+
+    getAudioStreamData(state) {
+      return state.audioStreamData;
     },
 
     getActiveModal(state) { 
@@ -28,6 +35,10 @@ export default {
       state.error = {
         text
       };
+    },
+
+    setAudioStreamData(state, data) {
+      state.audioStreamData = JSON.parse(data);
     },
 
     setHudStatus(state, level) {
