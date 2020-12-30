@@ -1,5 +1,5 @@
 try {
-    global.cefDomain = 'http://192.168.1.6:8080/';
+    global.cefDomain = 'http://192.168.43.174:8080/';
     // eslint-disable-next-line no-undef
     global.hud = mp.browsers.new(cefDomain + 'hud'); // Modal data
 

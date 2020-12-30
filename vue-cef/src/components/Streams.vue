@@ -1,5 +1,5 @@
 <template>
-    <div class="root">
+    <div>
         <YoutubeAudio />
     </div>
 </template>

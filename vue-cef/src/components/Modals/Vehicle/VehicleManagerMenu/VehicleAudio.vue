@@ -15,7 +15,7 @@
                         <button type="button" class="btn btn-primary btn-1"
                             v-on:click="audioLinkHandler"
                         
-                        >Запустить</button>
+                        >Сохранить</button>
                         <button type="button" class="btn btn-primary btn-2"
                             v-on:click="returnBack"
 

@@ -1,7 +1,7 @@
 <template>
     <div v-if="audioStream && audioStream.status && audioStream.id">
-        <iframe id="audio-stream" width="420" height="345" style="display: none" :src="`https://www.youtube.com/embed/${audioStream.id}?autoplay=1&controls=0`">
-        </iframe>
+        <p>Audio on: {{audioStream.link}}</p>
+        <iframe width="560" height="315" frameborder="0" style="display: none;" :src ="`https://www.youtube.com/embed/${audioStream.id}?autoplay=1&controls=0`" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
     </div>
 </template>
 

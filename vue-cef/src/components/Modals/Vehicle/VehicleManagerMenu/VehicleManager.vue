@@ -1,5 +1,5 @@
 <template>
-    <div class="root">
+    <div>
         <VehicleAudio v-if="activeModal === 'vehicle-manager-audio' && modalData" class="popup-overlay" />
 
         <VehicleSelectMenu v-if="activeModal === 'vehicle-manager' && modalData" class="popup-overlay" />
@@ -7,6 +7,7 @@
 </template>
 
 <script>
+
     import VehicleSelectMenu from '@/components/Modals/Vehicle/VehicleManagerMenu/VehicleSelectMenu';
     import VehicleAudio from '@/components/Modals/Vehicle/VehicleManagerMenu/VehicleAudio';
 
@@ -16,7 +17,7 @@
             VehicleSelectMenu,
         },
 
-        mounted() {
+/*         mounted() {
             let data = [{
                     id: 1,
                     htmlID: 'audio',
@@ -63,7 +64,7 @@
             ];
             this.$store.commit('setActiveModalData', JSON.stringify(data))
             this.$store.commit('setActiveModal', 'vehicle-manager');
-        },
+        }, */
 
         computed: {
 

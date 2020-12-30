@@ -14,9 +14,9 @@
                 <VehicleFunctions v-bind:vehicleFunctionsData="modalData" v-bind:focusFunctionId="focusFunctionId" />
             </div>
         </div>
-        <p id="vehicle-manager-close" v-on:click="closeModal">
+        <button id="vehicle-manager-close" class="btn btn-primary" v-on:click="closeModal">
             ЗАКРЫТЬ
-        </p>
+        </button>
     </div>
 
 
@@ -159,7 +159,6 @@
                 mp.trigger('vehicleManager_CEFChangesHandler', JSON.stringify(serverData));
 
                 this.focusFunctionId = 0;
-                // this.closeModal();
             }
         }
     }
@@ -214,18 +213,11 @@
 
     #vehicle-manager-close {
         color: #21272E;
-        background-color: #fff;
-        padding-left: 20px;
-        position: static;
-        margin-top: 31px;
         font-family: Roboto;
+        text-align: center;
+        display: flex;
+        margin: auto;
+        margin-top: 50px;
     }
 
-    .header {
-        color: white;
-        text-align: center;
-        font-size: 48px;
-        font-family: Roboto;
-        line-height: 70px;
-    }
 </style>
