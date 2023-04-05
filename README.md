@@ -1,4 +1,4 @@
-# GTA 5 Vehicle Manager System
+# Basic GTA 5 Vehicle Manager System with Youtube Audio player
 ## Description
 Stack: 
   Vue, Vuex, vue-router; Node.JS, bootstrap;
